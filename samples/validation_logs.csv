@@ -1,0 +1,19 @@
+test_id,requirement_id,subsystem,status,duration_seconds,failure_signature
+VAL-001,REQ-BOOT-01,boot,pass,12,
+VAL-002,REQ-BOOT-02,boot,fail,18,timeout waiting for ready signal
+VAL-002,REQ-BOOT-02,boot,pass,16,
+VAL-003,REQ-PCIE-01,pcie,pass,30,
+VAL-004,REQ-PCIE-02,pcie,fail,44,link training failed
+VAL-005,REQ-PCIE-03,pcie,blocked,0,test fixture unavailable
+VAL-006,REQ-THERMAL-01,thermal,pass,90,
+VAL-007,REQ-THERMAL-02,thermal,fail,120,temperature threshold exceeded
+VAL-008,REQ-STORAGE-01,storage,pass,55,
+VAL-009,REQ-STORAGE-02,storage,pass,61,
+VAL-010,REQ-STORAGE-03,storage,skip,0,not in current build
+VAL-011,REQ-FW-01,firmware,fail,22,assertion in firmware log
+VAL-012,REQ-FW-02,firmware,pass,19,
+VAL-013,REQ-FW-03,firmware,fail,25,assertion in firmware log
+VAL-014,REQ-POWER-01,power,pass,48,
+VAL-015,REQ-POWER-02,power,fail,52,voltage droop under load
+VAL-016,REQ-POWER-03,power,pass,49,
+
