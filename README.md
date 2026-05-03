@@ -2,6 +2,10 @@
 
 Validation Test Log Analyzer is a local triage tool that parses hardware/software test logs, groups failures by signature, calculates coverage and pass/fail status, and uses local AI to explain the validation result.
 
+## Product Screenshot
+
+![Product screenshot](assets/product-screenshot.png)
+
 The deterministic analyzer produces auditable metrics; the AI triage copilot turns those metrics into a concise debug plan.
 
 ## What It Does
