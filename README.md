@@ -1,60 +1,55 @@
-﻿# Validation Test Log Analyzer
+# Validation Test Log Analyzer
 
-A small Python validation/testing project that turns hardware or software test logs into coverage, failure, and triage reports.
+Validation Test Log Analyzer is a local triage tool that parses hardware/software test logs, groups failures by signature, calculates coverage and pass/fail status, and uses local AI to explain the validation result.
 
-## Why It Matches Validation / Test Jobs
+The deterministic analyzer produces auditable metrics; the AI triage copilot turns those metrics into a concise debug plan.
 
-- Shows test-plan thinking: test cases, requirements, expected results, pass/fail status
-- Produces coverage metrics by subsystem and requirement
-- Groups failures by signature for faster debug and root-cause triage
-- Generates structured JSON and readable HTML reports
-- Uses Python automation, CSV inputs, and repeatable command-line execution
+## What It Does
 
-## Features
+- Parses raw validation test logs.
+- Extracts pass/fail status, subsystem, error signature, and coverage information.
+- Groups recurring failures and highlights flaky patterns.
+- Generates JSON and Markdown summaries.
+- Adds AI triage analysis for hardware/software validation review.
 
-- Parse validation test logs from CSV
-- Calculate pass rate, fail rate, blocked tests, and skipped tests
-- Report requirement coverage and subsystem coverage
-- Identify top failing tests and common failure signatures
-- Flag flaky tests when the same test has both pass and fail outcomes
-- Export JSON summary and HTML report
+## AI Features
+
+- Local AI triage copilot explains the dominant failure pattern.
+- AI output recommends likely owner, next debug action, and release risk.
+- Recommendations are grounded in parsed log metrics.
+- The app can run deterministic analysis even when AI is not available.
+
+## Architecture
+
+```text
+Raw validation logs
+      |
+      v
+Log parser -> failure grouping -> coverage/pass-fail metrics
+      |
+      v
+Local AI triage copilot -> debug plan + risk summary
+      |
+      v
+JSON / Markdown output
+```
 
 ## Run
 
 ```powershell
-python app.py --input samples/validation_logs.csv --out report
+run.bat
 ```
 
-With local AI triage copilot:
+## Local AI Setup
 
-```powershell
-python app.py --input samples/validation_logs.csv --out report --use-ai
-```
+Use LM Studio or another local OpenAI-compatible server with a small model such as `google/gemma-4-e4b`.
 
-Outputs:
+## Main Files
 
-- `report/validation-summary.json`
-- `report/validation-report.html`
-- `report/validation-ai-brief.json`
-- `report/validation-ai-brief.md`
+- `app.py` - parser, summary generation, and AI triage prompt.
+- `samples/` - validation log samples.
+- `agents/Agent.md` - validation triage copilot instructions.
 
-## Engineering Impact
-- Built a Python validation log analyzer that parses test results, computes pass/fail/blocked rates, and reports requirement coverage by subsystem.
-- Implemented failure triage logic that groups failures by signature, highlights flaky tests, and identifies top failing validation cases.
-- Generated JSON and HTML reports to make validation status, test coverage, and debug priorities easier for engineering review.
+## Output
 
-## Project Workbench
-
-Launch the production-style desktop workbench with:
-
-```powershell
-launch-workbench.bat
-```
-
-What it adds:
-
-- Local-first AI copilot using `google/gemma-4-e4b` by default
-- Operator-focused workbench for reviewing real project inputs and outputs
-- System design, production-impact, and operational brief generation on demand
-- Grounded responses based on this project's README, sample files, and deterministic outputs
-
+The analyzer returns pass/fail counts, failure groups, coverage status, AI triage notes, and recommended next debug actions.
