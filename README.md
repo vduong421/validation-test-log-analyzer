@@ -1,4 +1,4 @@
-# Validation Test Log Analyzer
+﻿# Validation Test Log Analyzer
 
 A small Python validation/testing project that turns hardware or software test logs into coverage, failure, and triage reports.
 
@@ -25,18 +25,36 @@ A small Python validation/testing project that turns hardware or software test l
 python app.py --input samples/validation_logs.csv --out report
 ```
 
+With local AI triage copilot:
+
+```powershell
+python app.py --input samples/validation_logs.csv --out report --use-ai
+```
+
 Outputs:
 
 - `report/validation-summary.json`
 - `report/validation-report.html`
+- `report/validation-ai-brief.json`
+- `report/validation-ai-brief.md`
 
-## Resume Bullets
-
+## Engineering Impact
 - Built a Python validation log analyzer that parses test results, computes pass/fail/blocked rates, and reports requirement coverage by subsystem.
 - Implemented failure triage logic that groups failures by signature, highlights flaky tests, and identifies top failing validation cases.
 - Generated JSON and HTML reports to make validation status, test coverage, and debug priorities easier for engineering review.
 
-## GitHub Reminder
+## Project Workbench
 
-Push this project to GitHub before using it as a resume link.
+Launch the production-style desktop workbench with:
+
+```powershell
+launch-workbench.bat
+```
+
+What it adds:
+
+- Local-first AI copilot using `google/gemma-4-e4b` by default
+- Operator-focused workbench for reviewing real project inputs and outputs
+- System design, production-impact, and operational brief generation on demand
+- Grounded responses based on this project's README, sample files, and deterministic outputs
 

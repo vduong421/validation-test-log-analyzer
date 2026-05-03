@@ -1,8 +1,15 @@
-import argparse
+﻿import argparse
 import csv
 import json
 from collections import Counter, defaultdict
 from pathlib import Path
+import sys
+
+SHARED = Path(__file__).resolve().parents[1] / "_shared_project_workbench"
+if str(SHARED) not in sys.path:
+    sys.path.insert(0, str(SHARED))
+
+from local_llm import chat_json
 
 
 STATUSES = {"pass", "fail", "blocked", "skip"}
@@ -126,10 +133,32 @@ def write_html(summary, output_path):
     Path(output_path).write_text(html, encoding="utf-8")
 
 
+def generate_ai_triage(summary, model):
+    prompt = f"""You are a validation triage copilot for hardware/software test teams.
+
+Return only valid JSON with keys:
+- executive_summary
+- likely_hotspots (array of 3 short bullets)
+- next_debug_actions (array of 3 short bullets)
+- review_note
+
+Rules:
+- stay grounded in the structured summary
+- emphasize subsystem, failure signature, and flaky-test patterns
+- keep bullets short and practical
+
+Structured validation summary:
+{json.dumps(summary, indent=2)}
+"""
+    return chat_json(prompt, model=model)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Summarize validation test logs.")
     parser.add_argument("--input", required=True, help="CSV validation log path")
     parser.add_argument("--out", default="report", help="Output directory")
+    parser.add_argument("--use-ai", action="store_true")
+    parser.add_argument("--model", default="google/gemma-4-e4b")
     args = parser.parse_args()
 
     rows = read_logs(args.input)
@@ -138,6 +167,24 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "validation-summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     write_html(summary, output_dir / "validation-report.html")
+    if args.use_ai:
+        ai = generate_ai_triage(summary, args.model)
+        (output_dir / "validation-ai-brief.json").write_text(json.dumps(ai, indent=2), encoding="utf-8")
+        ai_md = [
+            "# AI Validation Triage Brief",
+            "",
+            ai["executive_summary"],
+            "",
+            "## Likely Hotspots",
+            *[f"- {item}" for item in ai.get("likely_hotspots", [])],
+            "",
+            "## Next Debug Actions",
+            *[f"- {item}" for item in ai.get("next_debug_actions", [])],
+            "",
+            f"## Review Note\n- {ai.get('review_note', '')}",
+        ]
+        (output_dir / "validation-ai-brief.md").write_text("\n".join(ai_md) + "\n", encoding="utf-8")
+        summary["ai_copilot"] = ai
     print(json.dumps(summary, indent=2))
 
 
